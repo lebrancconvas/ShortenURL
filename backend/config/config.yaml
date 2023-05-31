@@ -5,5 +5,5 @@ database:
   user: user
   password: password
   host: localhost
-  port: 5432
-  dbname: shortenurl 
+  port: 3080 
+  dbname: shortenurl

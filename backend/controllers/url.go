@@ -68,14 +68,14 @@ func (c *Controller) CreateShortURL(ctx *gin.Context) {
 func (c *Controller) GetShortURL(ctx *gin.Context) {
 	shortURL := ctx.Param("short_url")
 
-	url, err := c.Model.GetURLByShortURL(shortURL)
+	url, err := c.Model.GetOriginalURLByShortURL(shortURL)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get url: " + err.Error(),
 		})
 	}
 
-	ctx.Redirect(http.StatusMovedPermanently, url.OriginalURL)
+	ctx.Redirect(http.StatusMovedPermanently, url)
 }
 
 func (c *Controller) GetShortURLByID(ctx *gin.Context) {

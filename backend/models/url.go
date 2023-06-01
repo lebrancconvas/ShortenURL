@@ -14,6 +14,42 @@ func NewModel(db *sql.DB) *Model {
 	return &Model{db: db}
 }
 
+func (m *Model) StoreURL(originalURL string) error {
+	stmt, err := m.db.Prepare(`
+		INSERT INTO urls (original_url)
+		VALUES ($1)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Query(&originalURL)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Model) UpdateNewShortenURL(originalURL string, shortURL string) error {
+	stmt, err := m.db.Prepare(`
+		UPDATE urls
+		SET short_url = $1
+		WHERE original_url = $2
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(&shortURL, &originalURL)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Model) CreateNewURL(url forms.URLRequest) error {
 	stmt, err := m.db.Prepare(`
 		INSERT INTO urls (original_url, short_url)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lebrancconvas/ShortenURL/models"
+	"github.com/lebrancconvas/ShortenURL/utils"
 )
 
 type Controller struct {
@@ -25,7 +26,40 @@ func (c *Controller) Ping(ctx *gin.Context) {
 
 
 func (c *Controller) CreateShortURL(ctx *gin.Context) {
+	type RequestData struct {
+		OriginalURL string `json:"original_url" binding:"required"`
+	}
 
+	var req RequestData
+
+	err := ctx.ShouldBindJSON(&req)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request body",
+		})
+		return
+	}
+
+	err = c.Model.StoreURL(req.OriginalURL)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to store url: " + err.Error(),
+		})
+		return
+	}
+
+	shortURL := utils.GenerateShortURL()
+	err = c.Model.UpdateNewShortenURL(req.OriginalURL, shortURL)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to update short url: " + err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Successfully created new short url",
+	})
 }
 
 func (c *Controller) GetShortURL(ctx *gin.Context) {

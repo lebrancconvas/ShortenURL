@@ -1,7 +1,14 @@
 <script lang="ts">
+  import axios from 'axios';
   let url: string = '';
-  let handleSubmit = () => {
-    console.log(url);
+  let handleSubmit = async() => {
+    axios.post('http://localhost:8101/api/v1/short/url', {
+      "original_url": url
+    }).then(res => {
+      console.log(res.data);
+    }).catch(err => {
+      console.error(err);
+    })
   };
 </script>
 
@@ -17,7 +24,7 @@
   </header>
   <section id="form-section">
     <form on:submit={handleSubmit}>
-      <input type="text" name="url" id="url" placeholder="Enter URL">
+      <input type="text" bind:value={url} id="url" placeholder="Enter URL">
       <input type="submit" id="submit" value="Shorten">
     </form>
   </section>
@@ -34,6 +41,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Chakra Petch', sans-serif;
+    text-align: center;
   }
 
   h1 {
@@ -70,7 +78,7 @@
     bottom: 0;
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 95%;
     height: 50px;
     background-color: white;
     display: flex;

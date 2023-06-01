@@ -30,7 +30,7 @@
   </section>
   <footer>
     <div>
-      <p>Copyright 2023 <a href="https://github.com/lebrancconvas">Poom Yimyuean (@lebrancconvas)</a></p>
+      <p>Copyright 2023 <a href="https://github.com/lebrancconvas" target="_blank">Poom Yimyuean (@lebrancconvas)</a></p>
     </div>
   </footer>
 </main>

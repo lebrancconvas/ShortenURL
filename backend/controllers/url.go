@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lebrancconvas/ShortenURL/models"
@@ -30,9 +32,25 @@ func (c *Controller) GetShortURL(ctx *gin.Context) {
 
 }
 
+func (c *Controller) GetURLByID(ctx *gin.Context) {
+	id := ctx.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	url, err := c.Model.GetURLDetailByID(idInt)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get url: " + err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, url)
+}
+
 
 func (c *Controller) GetAllURL(ctx *gin.Context) {
-	urls, err := c.Model.GetAllURL()
+	urls, err := c.Model.GetAllURLDetail()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get all url: " + err.Error(),

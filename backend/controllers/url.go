@@ -41,28 +41,51 @@ func (c *Controller) CreateShortURL(ctx *gin.Context) {
 		return
 	}
 
-	err = c.Model.StoreURL(req.OriginalURL)
+	exist, err := c.Model.CheckExistOriginalURL(req.OriginalURL)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to store url: " + err.Error(),
+			"message": "Failed to check url: " + err.Error(),
 		})
 		return
 	}
 
-	shortURL := utils.GenerateShortURL()
-	err = c.Model.UpdateNewShortenURL(req.OriginalURL, shortURL)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed to update short url: " + err.Error(),
-		})
-		return
-	}
+	if !exist {
+		err = c.Model.StoreURL(req.OriginalURL)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to store url: " + err.Error(),
+			})
+			return
+		}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"original_url": req.OriginalURL,
-		"short_url": shortURL,
-		"message": "Successfully created new short url",
-	})
+		shortURL := utils.GenerateShortURL()
+		err = c.Model.UpdateNewShortenURL(req.OriginalURL, shortURL)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to update short url: " + err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"original_url": req.OriginalURL,
+			"short_url": shortURL,
+			"message": "Successfully created new short url",
+		})
+	} else {
+		shortURL, err := c.Model.GetShortURLByOriginalURL(req.OriginalURL)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to get short url: " + err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "URL already exist",
+			"original_url": req.OriginalURL,
+			"short_url": shortURL,
+		})
+	}
 }
 
 func (c *Controller) GetShortURL(ctx *gin.Context) {

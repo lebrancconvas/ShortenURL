@@ -14,6 +14,27 @@ func NewModel(db *sql.DB) *Model {
 	return &Model{db: db}
 }
 
+func (m *Model) CheckExistOriginalURL(originalURL string) (bool, error) {
+	var exist bool
+
+	stmt, err := m.db.Prepare(`
+		SELECT EXISTS (
+			SELECT 1 FROM urls WHERE original_url = $1
+		)
+	`)
+	if err != nil {
+		return false, err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(&originalURL).Scan(&exist)
+	if err != nil {
+		return false, err
+	}
+
+	return exist, nil
+}
+
 func (m *Model) StoreURL(originalURL string) error {
 	stmt, err := m.db.Prepare(`
 		INSERT INTO urls (original_url)
@@ -243,6 +264,7 @@ func (m *Model) GetOriginalURLByShortURL(shortURL string) (string, error) {
 		SELECT original_url
 		FROM urls
 		WHERE short_url = $1
+		LIMIT 1
 	`)
 	if err != nil {
 		return originalURL, err

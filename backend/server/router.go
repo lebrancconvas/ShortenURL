@@ -10,10 +10,15 @@ func NewRouter(controller *controllers.Controller) *gin.Engine {
 
 	api := router.Group("/api")
 	{
+		api.GET("/ping", controller.Ping)
 		v1 := api.Group("/v1")
 		{
-			v1.POST("/url", controller.CreateShortURL)
-			v1.GET("/url", controller.GetShortURL)
+			v1.GET("/urls", controller.GetAllURL)
+			short := v1.Group("/short")
+			{
+				short.POST("/url", controller.CreateShortURL)
+				short.GET("/url", controller.GetShortURL)
+			}
 		}
 	}
 

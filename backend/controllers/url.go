@@ -32,6 +32,23 @@ func (c *Controller) GetShortURL(ctx *gin.Context) {
 
 }
 
+func (c *Controller) GetShortURLByID(ctx *gin.Context) {
+	id := ctx.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	shortURL, err := c.Model.GetShortURLByID(idInt)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get short url: " + err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, shortURL)
+}
+
 func (c *Controller) GetURLByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 	idInt, err := strconv.Atoi(id)

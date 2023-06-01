@@ -123,3 +123,26 @@ func (m *Model) GetURLDetailByID(id int) (forms.URLDetail, error) {
 
 	return url, nil
 }
+
+func (m *Model) GetShortURLByID(id int) (string, error) {
+	var shortURL string
+
+	stmt, err := m.db.Prepare(`
+		SELECT short_url
+		FROM urls
+		WHERE url_id = $1
+	`)
+	if err != nil {
+		return shortURL, err
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow(id)
+
+	err = row.Scan(&shortURL)
+	if err != nil {
+		return shortURL, err
+	}
+
+	return shortURL, nil
+}

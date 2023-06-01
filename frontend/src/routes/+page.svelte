@@ -1,2 +1,21 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+
+</script>
+
+<svelte:head>
+  <title>URL Shortner</title>
+</svelte:head>
+
+<main>
+  <header>
+    <div>
+      <h1>URL Shortener</h1>
+    </div>
+  </header>
+  <section id="form-section">
+    <form action="">
+      <input type="text" name="url" id="url" placeholder="Enter URL">
+      <input type="submit" value="Shorten">
+    </form>
+  </section>
+</main>

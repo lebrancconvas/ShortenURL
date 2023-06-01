@@ -9,6 +9,8 @@ import (
 func NewRouter(controller *controllers.Controller) *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
+	router.GET("/:short_url", controller.GetShortURL) // GET /:short_url
+
 
 	api := router.Group("/api")
 	{
@@ -20,7 +22,6 @@ func NewRouter(controller *controllers.Controller) *gin.Engine {
 			short := v1.Group("/short")
 			{
 				short.POST("/url", controller.CreateShortURL) // POST /api/v1/short/url
-				short.GET("/:short_url", controller.GetShortURL) // GET /api/v1/short/:short_url 
 				short.GET("/url/:id", controller.GetShortURLByID)
 			}
 		}

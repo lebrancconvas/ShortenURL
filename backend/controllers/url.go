@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	// "github.com/lebrancconvas/ShortenURL/forms"
 	"github.com/lebrancconvas/ShortenURL/models"
 	"github.com/lebrancconvas/ShortenURL/utils"
 )
@@ -58,12 +59,23 @@ func (c *Controller) CreateShortURL(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
+		"original_url": req.OriginalURL,
+		"short_url": shortURL,
 		"message": "Successfully created new short url",
 	})
 }
 
 func (c *Controller) GetShortURL(ctx *gin.Context) {
+	shortURL := ctx.Param("short_url")
 
+	url, err := c.Model.GetURLByShortURL(shortURL)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to get url: " + err.Error(),
+		})
+	}
+
+	ctx.Redirect(http.StatusMovedPermanently, url.OriginalURL)
 }
 
 func (c *Controller) GetShortURLByID(ctx *gin.Context) {

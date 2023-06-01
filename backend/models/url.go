@@ -91,6 +91,36 @@ func (m *Model) GetAllURL() ([]forms.URL, error) {
 	return urls, nil
 }
 
+
+func (m *Model) GetURLByShortURL(shortURL string) (forms.URL, error) {
+	var url forms.URL 
+
+	stmt, err := m.db.Prepare(`
+		SELECT url_id, original_url, short_url
+		FROM urls
+		WHERE short_url = $1
+	`)
+	if err != nil {
+		return url, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(&shortURL)
+	if err != nil {
+		return url, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&url.ID, &url.OriginalURL, &url.ShortURL)
+		if err != nil {
+			return url, err
+		}
+	}
+
+	return url, nil
+}
+
 func (m *Model) GetAllURLDetail() ([]forms.URLDetail, error) {
 	var urls []forms.URLDetail
 

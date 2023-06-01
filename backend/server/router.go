@@ -18,7 +18,7 @@ func NewRouter(controller *controllers.Controller) *gin.Engine {
 			short := v1.Group("/short")
 			{
 				short.POST("/url", controller.CreateShortURL)
-				short.GET("/url", controller.GetShortURL)
+				short.GET("/:short_url", controller.GetShortURL)
 				short.GET("/url/:id", controller.GetShortURLByID)
 			}
 		}

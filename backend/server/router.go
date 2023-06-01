@@ -1,12 +1,14 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/lebrancconvas/ShortenURL/controllers"
 )
 
 func NewRouter(controller *controllers.Controller) *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default()) 
 
 	api := router.Group("/api")
 	{
